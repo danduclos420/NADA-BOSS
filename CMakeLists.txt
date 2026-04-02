@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # ============================================================
 # IMPORTANT: Change these paths to match your machine
 # ============================================================
-set(JUCE_PATH "C:/JUCE" CACHE PATH "Path to JUCE")
+set(JUCE_PATH "E:/telechargement/juce-8.0.12-windows/JUCE" CACHE PATH "Path to JUCE")
 
 # ONNX Runtime - set to "OFF" if you don't have it yet
 option(USE_ONNX "Enable ONNX Runtime for AI" OFF)
