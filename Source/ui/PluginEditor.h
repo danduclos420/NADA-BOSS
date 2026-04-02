@@ -1,5 +1,5 @@
 #pragma once
-#include <juce_gui_basics/juce_gui_basics.h>
+#include <JuceHeader.h>
 #include "../dsp/PluginProcessor.h"
 
 // ==============================================================================
@@ -42,7 +42,7 @@ private:
 };
 
 // ==============================================================================
-// KNOB SECTION
+// KNOB SECTION — Un groupe de knobs avec label de section
 // ==============================================================================
 class KnobSection : public juce::Component
 {
@@ -67,7 +67,7 @@ private:
 // NADA AUDIO PROCESSOR EDITOR
 // ==============================================================================
 class NADAAudioProcessorEditor : public juce::AudioProcessorEditor,
-                                 public juce::Timer
+                                  public juce::Timer
 {
 public:
     NADAAudioProcessorEditor(NADAAudioProcessor&);
@@ -79,18 +79,21 @@ public:
 
 private:
     NADAAudioProcessor& audioProcessor;
-    NADALookAndFeel lnf;
+    NADALookAndFeel     lnf;
 
+    // ── Sections de knobs ───────────────────────────────────────────────────
     std::unique_ptr<KnobSection> pitchSection;
     std::unique_ptr<KnobSection> compSection;
     std::unique_ptr<KnobSection> colorSection;
     std::unique_ptr<KnobSection> fxSection;
 
-    SpectrumDisplay spectrumDisplay;
-    juce::TextButton   aiAnalyzeBtn;
+    // ── AI Panel ─────────────────────────────────────────────────────────────
+    SpectrumDisplay   spectrumDisplay;
+    juce::TextButton  aiAnalyzeBtn;
     juce::ToggleButton aiAutoBtn;
-    juce::Label        aiStatusLabel;
+    juce::Label       aiStatusLabel;
 
+    // ── Master ───────────────────────────────────────────────────────────────
     juce::Slider masterKnob;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> masterAttach;
 
