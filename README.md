@@ -54,8 +54,9 @@ Output
 ### Étapes
 
 ```bash
-# 1. Clone / copie le projet dans un dossier
-cd C:\MesPlugins\NADA-BOSS
+# 1. Clone le projet
+git clone https://github.com/danduclos420/NADA-BOSS.git
+cd NADA-BOSS
 
 # 2. Ouvre CMakeLists.txt et change le chemin JUCE
 # set(JUCE_PATH "C:/JUCE")   ← Ton chemin JUCE
@@ -111,7 +112,7 @@ cmake --build . --config Release
 Pour activer le vrai modèle ML:
 1. Télécharger ONNX Runtime: https://github.com/microsoft/onnxruntime/releases
 2. Extraire dans C:\onnxruntime\
-3. Dans CMakeLists.txt, changer: `option(USE_ONNX "Enable ONNX Runtime" ON)`
+3. Dans CMakeLists.txt, changer: `option(USE_ONNX "Enable ONNX Runtime for AI" ON)`
 4. Recompiler
 
 ---

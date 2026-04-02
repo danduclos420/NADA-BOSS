@@ -1,5 +1,5 @@
 #pragma once
-#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_gui_basics/juce_gui_basics.h>
 #include "../dsp/PluginProcessor.h"
 
 // ==============================================================================
@@ -15,8 +15,8 @@ public:
                           juce::Slider& slider) override;
 
     void drawButtonBackground(juce::Graphics& g, juce::Button& button,
-                               const juce::Colour& bg,
-                               bool isHighlighted, bool isDown) override;
+                              const juce::Colour& bg,
+                              bool isHighlighted, bool isDown) override;
 
     void drawLabel(juce::Graphics& g, juce::Label& label) override;
 };
@@ -33,7 +33,7 @@ public:
 private:
     AISpectralAnalyzer::VocalProfile profile;
 
-    const juce::String bandNames[6]  = { "RUMBLE", "BODY", "MID", "PRESENCE", "SIBILANCE", "AIR" };
+    const juce::String bandNames[6] = { "RUMBLE", "BODY", "MID", "PRESENCE", "SIBILANCE", "AIR" };
     const juce::Colour bandColours[6] = {
         juce::Colour(0xff880000), juce::Colour(0xff994400),
         juce::Colour(0xff998800), juce::Colour(0xff008844),
@@ -67,7 +67,7 @@ private:
 // NADA AUDIO PROCESSOR EDITOR
 // ==============================================================================
 class NADAAudioProcessorEditor : public juce::AudioProcessorEditor,
-                                  public juce::Timer
+                                 public juce::Timer
 {
 public:
     NADAAudioProcessorEditor(NADAAudioProcessor&);
@@ -79,14 +79,14 @@ public:
 
 private:
     NADAAudioProcessor& audioProcessor;
-    NADALookAndFeel     lnf;
+    NADALookAndFeel lnf;
 
     std::unique_ptr<KnobSection> pitchSection;
     std::unique_ptr<KnobSection> compSection;
     std::unique_ptr<KnobSection> colorSection;
     std::unique_ptr<KnobSection> fxSection;
 
-    SpectrumDisplay    spectrumDisplay;
+    SpectrumDisplay spectrumDisplay;
     juce::TextButton   aiAnalyzeBtn;
     juce::ToggleButton aiAutoBtn;
     juce::Label        aiStatusLabel;

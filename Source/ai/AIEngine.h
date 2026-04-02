@@ -3,7 +3,6 @@
 #include <vector>
 #include <array>
 #include <cmath>
-#include <algorithm>
 
 // ==============================================================================
 // AI SPECTRAL ANALYZER
@@ -52,12 +51,12 @@ public:
         for (int i = 0; i < fftSize / 2; ++i)
             magnitudes[i] = fftData[i];
 
-        profile.lowFreqEnergy    = getBandEnergy(50.f,    200.f,   sampleRate);
-        profile.lowMidEnergy     = getBandEnergy(200.f,   500.f,   sampleRate);
-        profile.midEnergy        = getBandEnergy(500.f,   2000.f,  sampleRate);
-        profile.presenceEnergy   = getBandEnergy(2000.f,  5000.f,  sampleRate);
-        profile.sibilanceEnergy  = getBandEnergy(5000.f,  10000.f, sampleRate);
-        profile.brillianceEnergy = getBandEnergy(10000.f, 20000.f, sampleRate);
+        profile.lowFreqEnergy    = getBandEnergy(50.f,   200.f,   sampleRate);
+        profile.lowMidEnergy     = getBandEnergy(200.f,  500.f,   sampleRate);
+        profile.midEnergy        = getBandEnergy(500.f,  2000.f,  sampleRate);
+        profile.presenceEnergy   = getBandEnergy(2000.f, 5000.f,  sampleRate);
+        profile.sibilanceEnergy  = getBandEnergy(5000.f, 10000.f, sampleRate);
+        profile.brillianceEnergy = getBandEnergy(10000.f,20000.f, sampleRate);
 
         float maxSample = 0.0f, sumSq = 0.0f;
         for (float s : audioBuffer)
@@ -66,7 +65,6 @@ public:
             if (a > maxSample) maxSample = a;
             sumSq += s * s;
         }
-
         float rms = std::sqrt(sumSq / (float)audioBuffer.size());
         profile.rmsLevel = rms;
         profile.dynamicRange = (rms > 1e-6f)
@@ -96,7 +94,6 @@ private:
 
 // ==============================================================================
 // AI MIXER
-// Génère des paramètres de mixage basés sur l'analyse spectrale
 // ==============================================================================
 class AIMixer
 {
@@ -112,50 +109,33 @@ public:
     {
         std::array<EQBand, 6> eqBands;
         float fet1176Threshold  = -20.0f;
-        float fet1176Ratio      =   4.0f;
-        float optoLA2AReduction =  30.0f;
-        float hg2Saturation     =   0.1f;
-        float deesserRange      =   0.2f;
-        float limiterThreshold  =  -1.0f;
-        float reverbMix         =  0.12f;
-        float delayMix          =  0.08f;
+        float fet1176Ratio      = 4.0f;
+        float optoLA2AReduction = 30.0f;
+        float hg2Saturation     = 0.1f;
+        float deesserRange      = 0.2f;
+        float limiterThreshold  = -1.0f;
+        float reverbMix         = 0.12f;
+        float delayMix          = 0.08f;
     };
 
     MixingParameters generateMixingParameters(const AISpectralAnalyzer::VocalProfile& p)
     {
         MixingParameters out;
 
-        out.eqBands[0].frequency = 80.0f;
-        out.eqBands[0].gain = (p.lowFreqEnergy > 0.3f) ? -4.0f : 0.0f;
-        out.eqBands[0].q    = 0.7f;
+        out.eqBands[0] = { 80.0f,    (p.lowFreqEnergy   > 0.3f) ? -4.0f : 0.0f,   0.7f };
+        out.eqBands[1] = { 280.0f,   (p.lowMidEnergy    > 0.5f) ? -3.0f : -1.0f,  1.2f };
+        out.eqBands[2] = { 800.0f,   (p.midEnergy       < 0.3f) ? 2.0f  : 0.0f,   1.0f };
+        out.eqBands[3] = { 3000.0f,  (p.presenceEnergy  < 0.4f) ? 3.0f  : 1.5f,   2.0f };
+        out.eqBands[4] = { 7000.0f,  (p.sibilanceEnergy > 0.6f) ? -2.5f : 0.0f,   1.5f };
+        out.eqBands[5] = { 12000.0f, (p.brillianceEnergy< 0.3f) ? 3.5f  : 1.0f,   0.8f };
 
-        out.eqBands[1].frequency = 280.0f;
-        out.eqBands[1].gain = (p.lowMidEnergy > 0.5f) ? -3.0f : -1.0f;
-        out.eqBands[1].q    = 1.2f;
-
-        out.eqBands[2].frequency = 800.0f;
-        out.eqBands[2].gain = (p.midEnergy < 0.3f) ? 2.0f : 0.0f;
-        out.eqBands[2].q    = 1.0f;
-
-        out.eqBands[3].frequency = 3000.0f;
-        out.eqBands[3].gain = (p.presenceEnergy < 0.4f) ? 3.0f : 1.5f;
-        out.eqBands[3].q    = 2.0f;
-
-        out.eqBands[4].frequency = 7000.0f;
-        out.eqBands[4].gain = (p.sibilanceEnergy > 0.6f) ? -2.5f : 0.0f;
-        out.eqBands[4].q    = 1.5f;
-
-        out.eqBands[5].frequency = 12000.0f;
-        out.eqBands[5].gain = (p.brillianceEnergy < 0.3f) ? 3.5f : 1.0f;
-        out.eqBands[5].q    = 0.8f;
-
-        out.fet1176Threshold = -20.0f - (p.dynamicRange > 12.0f ? 4.0f : 0.0f);
-        out.fet1176Ratio     = (p.dynamicRange > 15.0f) ? 8.0f : 4.0f;
+        out.fet1176Threshold  = -20.0f - (p.dynamicRange > 12.0f ? 4.0f : 0.0f);
+        out.fet1176Ratio      = (p.dynamicRange > 15.0f) ? 8.0f : 4.0f;
         out.optoLA2AReduction = 25.0f + (p.dynamicRange > 10.0f ? 10.0f : 0.0f);
-        out.hg2Saturation    = (p.presenceEnergy > 0.6f && p.brillianceEnergy < 0.4f) ? 0.2f : 0.08f;
-        out.deesserRange     = (p.sibilanceEnergy > 0.6f) ? 0.5f : 0.2f;
-        out.reverbMix        = (p.rmsLevel < 0.05f) ? 0.15f : 0.10f;
-        out.delayMix         = 0.08f;
+        out.hg2Saturation     = (p.presenceEnergy > 0.6f && p.brillianceEnergy < 0.4f) ? 0.2f : 0.08f;
+        out.deesserRange      = (p.sibilanceEnergy > 0.6f) ? 0.5f : 0.2f;
+        out.reverbMix         = (p.rmsLevel < 0.05f) ? 0.15f : 0.10f;
+        out.delayMix          = 0.08f;
 
         return out;
     }
