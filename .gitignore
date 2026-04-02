@@ -1,0 +1,36 @@
+# Build directories
+build/
+Builds/
+.vs/
+*.user
+*.suo
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Visual Studio
+*.vcxproj
+*.sln
+*.filters
+
+# JUCE auto-generated
+JuceLibraryCode/
+
+# macOS
+.DS_Store
+*.dSYM/
+
+# Windows
+Thumbs.db
+
+# ONNX (optionnel, gros fichiers)
+onnxruntime/
+*.dll
+*.lib
+*.pdb
+
+# VST3 binaires compilés (source only repo)
+*.vst3
