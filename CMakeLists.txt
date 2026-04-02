@@ -35,8 +35,14 @@ juce_add_plugin(NADA_BOSS
 )
 
 target_sources(NADA_BOSS PRIVATE
-    Source/dsp/PluginProcessor.cpp
-    Source/ui/PluginEditor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/dsp/PluginProcessor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/ui/PluginEditor.cpp
+)
+
+target_include_directories(NADA_BOSS PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/dsp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/ai
 )
 
 target_compile_definitions(NADA_BOSS PUBLIC
